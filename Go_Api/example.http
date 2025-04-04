@@ -1,0 +1,12 @@
+
+Get  http://localhost:8080/history
+
+
+###
+POST http://localhost:8080/history
+Content-type: application/json; charset=utf-8
+
+{
+    "UserName": "Сергей1",
+    "Query": "John Coltrane11"
+}
