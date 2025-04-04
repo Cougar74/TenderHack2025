@@ -3,10 +3,38 @@ Get  http://localhost:8080/history
 
 
 ###
+Get  http://localhost:8080/historyUser/Сергей2
+
+
+###
 POST http://localhost:8080/history
 Content-type: application/json; charset=utf-8
 
 {
-    "UserName": "Сергей1",
+    "UserName": "Сергей2",
     "Query": "John Coltrane11"
+}
+
+###
+PUT http://localhost:8080/history/2
+Content-type: application/json; charset=utf-8
+
+{
+    "UserName": "Сергей1",
+    "Query": "John Coltrane11",
+    "ClassificationId": 1,
+    "Responce": "John Coltrane11",
+    "Rating": 4
+}
+
+###
+
+Get  http://localhost:8080/classification
+
+###
+POST http://localhost:8080/classification
+Content-type: application/json; charset=utf-8
+
+{
+    "Name": "Сергей1"
 }

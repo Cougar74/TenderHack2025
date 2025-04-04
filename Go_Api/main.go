@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -45,6 +44,10 @@ func main() {
 	r.PUT("/history/:id", updateHistory)
 	r.DELETE("/history/:id", deleteHistory)
 	r.GET("/history", getHistory)
+	r.GET("/historyUser/:UserName", getHistoryUser)
+
+	r.POST("/classification", createClassification)
+	r.GET("/classification", getClassification)
 
 	r.Run(":8080")
 }
@@ -92,6 +95,30 @@ func deleteHistory(c *gin.Context) {
 func getHistory(c *gin.Context) {
 	var history []History
 	db.Find(&history)
-	fmt.Print(history)
 	c.JSON(http.StatusOK, history)
+}
+
+func getHistoryUser(c *gin.Context) {
+	var history []History
+	db.Where("user_name = ?", c.Param("UserName")).Find(&history)
+	c.JSON(http.StatusOK, history)
+}
+
+func createClassification(c *gin.Context) {
+	var classification Classification
+	if err := c.ShouldBindJSON(&classification); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	if err := db.Create(&classification).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, classification)
+}
+
+func getClassification(c *gin.Context) {
+	var classification []Classification
+	db.Find(&classification)
+	c.JSON(http.StatusOK, classification)
 }
