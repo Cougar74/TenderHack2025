@@ -1,0 +1,5 @@
+env/
+my_test/
+web/node_modules
+web/build
+web/.env

@@ -1,0 +1,12 @@
+.request {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+    user-select: none;
+}
+
+.response {
+    display: flex;
+    justify-content: flex-start;
+    width: 100%;
+}

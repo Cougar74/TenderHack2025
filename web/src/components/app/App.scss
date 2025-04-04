@@ -1,0 +1,19 @@
+.query-input-container {
+    min-height: 80px;
+    background-color: white;
+    transition: all .5s ease-in-out;
+
+    &.centered {
+        position: absolute;
+        bottom: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    &.fixed-bottom {
+        position: fixed;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+}
