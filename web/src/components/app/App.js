@@ -4,6 +4,7 @@ import { Container, Stack } from 'react-bootstrap';
 
 import QueryInput from '../queryInput/QueryInput';
 import ChatElement from '../chatElement/ChatElement';
+import ModalOperator from '../modalOperator/ModalOperator';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.scss';
@@ -12,6 +13,7 @@ function App() {
     const [chatList, setChatList] = useState([]);
     const queryInputContainerRef = useRef(null);
     const lastChatElement = useRef(null);
+    const [showModal, setShowModal] = useState(false);
 
     useEffect(() => {
         if (chatList.length === 0) {
@@ -20,6 +22,9 @@ function App() {
             queryInputContainerRef.current.classList.add('fixed-bottom');
         }
     }, [chatList]);
+
+    const handleClose = () => setShowModal(false);
+    const handleShow = () => setShowModal(true);
 
     const addQuery = ( query ) => {
         const data = {
@@ -30,15 +35,16 @@ function App() {
 
         const data_table = {
             data_type: 'response',
-            content_type: 'table',
-            content: {
-                columns: ['#', 'Test', 'Test_2', 'Test_3'],
-                values: [
-                    ['1', '123', '345', '678'],
-                    ['2', '223', '345', '678'],
-                    ['3', '323', '345', '678'],
-                ]
-            },
+            content_type: 'text',
+            content: 'test test  test test test test test test test test test test test test test test'
+            // content: {
+            //     columns: ['#', 'Test', 'Test_2', 'Test_3'],
+            //     values: [
+            //         ['1', '123', '345', '678'],
+            //         ['2', '223', '345', '678'],
+            //         ['3', '323', '345', '678'],
+            //     ]
+            // },
         };
 
         setChatList((prevChatList) => {
@@ -64,7 +70,8 @@ function App() {
         const items = chatList.map((chat, index) => (
             <ChatElement 
                 key={index} 
-                data={chat} 
+                data={chat}
+                handleModal={handleShow}
                 ref={index === chatList.length - 1 ? lastChatElement : null} 
             />
         ));
@@ -74,7 +81,7 @@ function App() {
                 {items}
             </>
         )
-    }
+    };
 
     return (
         <>
@@ -87,6 +94,8 @@ function App() {
                     <QueryInput isData={chatList.length ? true : false} addQuery={addQuery}/>
                 </div>
             </Container>
+
+            {showModal ? <ModalOperator show={showModal} handleClose={handleClose}/> : null}
         </>
     );
 }
