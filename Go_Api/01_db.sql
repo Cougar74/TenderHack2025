@@ -20,6 +20,8 @@ CREATE TABLE Histories (
 );
 
 
+
+
 --ADD DATA
 INSERT INTO public.classifications(id,name) VALUES 
 (1,'Вопросы о регистрации и управлении учетными записями'),

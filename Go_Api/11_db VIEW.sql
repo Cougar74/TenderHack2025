@@ -1,3 +1,6 @@
+
+
+
 CREATE VIEW сategories_by_date as
 	with data_responce_and_rating_to_interaction_result as (
 		SELECT 
