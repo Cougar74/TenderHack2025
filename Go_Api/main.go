@@ -48,7 +48,8 @@ type HistoryUpdateRating struct {
 var db *gorm.DB
 
 type Cfg struct {
-	DB string `yaml:"db"`
+	DB   string `yaml:"db"`
+	HOST string `yaml:"host"`
 }
 
 var AppConfig *Cfg
@@ -95,7 +96,7 @@ func main() {
 	r.POST("/classification", createClassification)
 	r.GET("/classification", getClassification)
 
-	r.Run(":8080")
+	r.Run(AppConfig.HOST)
 }
 
 func createHistory(c *gin.Context) {
