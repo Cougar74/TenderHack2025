@@ -4,7 +4,7 @@ Get  http://localhost:8080/history
 
 
 ### Получить всю историю, одного  пользователея
-Get  http://localhost:8080/historyUser/53aa35c8-e659-44b2-882f-f6056e443c90
+Get  http://localhost:8080/historyUser/53aa35c8-e659-44b2-882f-f6a56e443c90
 
 
 ### Создать историю для пользователя.
@@ -12,7 +12,7 @@ POST http://localhost:8080/history
 Content-type: application/json; charset=utf-8
 
 {
-    "UserUuid": "53aa35c8-e659-44b2-882f-f6056e443c90",
+    "UserUuid": "53aa35c8-e659-44b2-882f-f6a56e443c90",
     "Query": "John Coltrane11"
 }
 
@@ -21,11 +21,25 @@ PUT http://localhost:8080/history/ResponceAndClassificationId
 Content-type: application/json; charset=utf-8
 
 {
-    "ID": 2,
-    "Responce": "Responce2",
+    "ID": 119272,
+    "Responce": "{\"name\": \"Responce2\"}",
     "ClassificationId": null
 
 }
+
+
+
+### Обновить у истории Ответ и Классификацию(Name)
+PUT http://localhost:8080/history/ResponceAndClassificationName
+Content-type: application/json; charset=utf-8
+
+{
+    "ID": 119272,
+    "Responce": "{\"name\": \"Responce12\"}",
+    "ClassificationName": "Сергей22"
+
+}
+
 
 ### Обновить рейтинг у истории
 PUT http://localhost:8080/history/Rating
@@ -46,3 +60,6 @@ Content-type: application/json; charset=utf-8
 {
     "Name": "Сергей22"
 }
+
+### Получить все запросы категория до датам
+Get  http://localhost:8080/categoriesbydate
