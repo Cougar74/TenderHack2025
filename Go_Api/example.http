@@ -1,12 +1,13 @@
 
+### Получить всю историю, всех  пользователей
 Get  http://localhost:8080/history
 
 
-###
+### Получить всю историю, одного  пользователея
 Get  http://localhost:8080/historyUser/53aa35c8-e659-44b2-882f-f6056e443c90
 
 
-###
+### Создать историю для пользователя.
 POST http://localhost:8080/history
 Content-type: application/json; charset=utf-8
 
@@ -15,7 +16,7 @@ Content-type: application/json; charset=utf-8
     "Query": "John Coltrane11"
 }
 
-###
+### Обновить у истории Ответ и Классификацию(ID)
 PUT http://localhost:8080/history/ResponceAndClassificationId
 Content-type: application/json; charset=utf-8
 
@@ -26,7 +27,7 @@ Content-type: application/json; charset=utf-8
 
 }
 
-###
+### Обновить рейтинг у истории
 PUT http://localhost:8080/history/Rating
 Content-type: application/json; charset=utf-8
 
@@ -35,11 +36,10 @@ Content-type: application/json; charset=utf-8
     "Rating": 10
 }
 
-###
-
+### Получить все классификации
 Get  http://localhost:8080/classification
 
-###
+### Добавить классификацию
 POST http://localhost:8080/classification
 Content-type: application/json; charset=utf-8
 
