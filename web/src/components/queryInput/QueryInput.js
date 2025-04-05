@@ -28,7 +28,7 @@ const QueryInput = ({ isData, addQuery }) => {
 
     return (
         <Stack gap={4}>
-            {isData ? null : <h2 className='text-center'>Чем вам помочь?</h2>}
+            {isData ? null : <h2 className='text-center' style={{ caretColor: 'transparent' }}>Чем вам помочь?</h2>}
             
             <InputGroup className="mb-3">
                 <Form.Control

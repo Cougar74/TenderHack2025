@@ -16,3 +16,7 @@
     margin: 1rem;
     caret-color: transparent;
 }
+
+.card-link+.card-link {
+    margin-left: 0 !important;
+}

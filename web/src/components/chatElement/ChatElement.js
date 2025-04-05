@@ -5,13 +5,23 @@ import UserRates from '../userRates/UserRates';
 import './ChatElement.scss';
 
 const ChatElement = ({ data, handleModal }) => {
-    const {data_type, content, content_type} = data;
+    const {data_type, content, content_type, id, links} = data;
 
     const generateSupport = () => {
         return(
             <span>По вашему запросу ничего не найдено. Попробуйте изменить запрос или <a href="#" onClick={handleModal}>обратитесь в поддержку</a></span>
         )
-    }
+    };
+
+    const generateLinks = () => {
+        const items = links.map((item, i) => {
+            return (
+                <Card.Link href={item.link} key={item.text}>{item.text}</Card.Link>
+            )
+        });
+
+        return items;
+    };
     
     const parse = () => {
         if (data_type === 'request') {
@@ -31,12 +41,12 @@ const ChatElement = ({ data, handleModal }) => {
                     <>
                         <Card style={{width: 'max-content'}} border='0'>
                             <Card.Body className='p-0'>
-                                {/* {content ? content : 'По вашему запросу ничего не найдено. Попробуйте изменить запрос или обратитесь в поддержку'} */}
                                 {content ? content : generateSupport()}
                             </Card.Body>
+                            {generateLinks()}
                         </Card>
 
-                        {content ? <UserRates /> : null}
+                        {content ? <UserRates id={id} /> : null}
                     </>
                 );
             } else {

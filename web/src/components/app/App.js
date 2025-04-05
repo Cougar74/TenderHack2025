@@ -15,15 +15,29 @@ function App() {
     const queryInputContainerRef = useRef(null);
     const lastChatElement = useRef(null);
     const [showModal, setShowModal] = useState(false);
+    const {loading, error, getUserHistory, postQueryResponse, clearError} = useApiService();
 
-    useEffect(() => {
-        if (!localStorage.getItem('uuid')) {
-            localStorage.setItem('uuid', crypto.randomUUID());
+    const onHistoryLoaded = (history) => {
+        setChatList(history);
+    };
+
+    const getUuid = () => {
+        let uuid = localStorage.getItem('uuid');
+
+        if (!uuid) {
+            uuid = crypto.randomUUID();
+            localStorage.setItem('uuid', uuid);
         }
 
-        const uuid = localStorage.getItem('uuid');
+        return uuid;
+    };
 
+    useEffect(() => {
+        const uuid = getUuid();
 
+        clearError();
+        getUserHistory(uuid)
+            .then(onHistoryLoaded);
     }, []);
 
     useEffect(() => {
@@ -37,44 +51,31 @@ function App() {
     const handleClose = () => setShowModal(false);
     const handleShow = () => setShowModal(true);
 
+    const updateChatList = ( new_data ) => {
+        setChatList((prevChatList) => ([...prevChatList, new_data]));
+    };
+
     const addQuery = ( query ) => {
         const data = {
             data_type: 'request',
             content: query,
             content_type: 'text',
         };
+        updateChatList(data);
 
-        const data_table = {
-            data_type: 'response',
-            content_type: 'text',
-            content: 'test test  test test test test test test test test test test test test test test'
-            // content: {
-            //     columns: ['#', 'Test', 'Test_2', 'Test_3'],
-            //     values: [
-            //         ['1', '123', '345', '678'],
-            //         ['2', '223', '345', '678'],
-            //         ['3', '323', '345', '678'],
-            //     ]
-            // },
-        };
+        clearError();
+        postQueryResponse(query)
+            .then(({ id, answer, links }) => {
+                const data = {
+                    data_type: 'response',
+                    content: answer,
+                    content_type: 'text',
+                    id: id,
+                    links: links,
+                };
 
-        setChatList((prevChatList) => {
-            let updatedChatList;
-
-            if (prevChatList.length === 2) {
-                updatedChatList = [...prevChatList, data, data_table];
-            } else {
-                updatedChatList = [...prevChatList, data];
-            }
-            
-            setTimeout(() => {
-                if (lastChatElement.current) {
-                    lastChatElement.current.scrollIntoView({ behavior: 'smooth' });
-                }
-            }, 0);
-
-            return updatedChatList;
-        });
+                updateChatList(data);
+            });
     };
 
     const renderChatElement = () => {

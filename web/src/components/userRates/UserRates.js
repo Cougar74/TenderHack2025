@@ -1,6 +1,8 @@
 import { useState, useEffect, use } from 'react';
 import { Card } from 'react-bootstrap';
 
+import useApiService from '../../services/ApiService';
+
 import Rate_1 from '../../icons/1.png';
 import Rate_2 from '../../icons/2.png';
 import Rate_3 from '../../icons/3.png';
@@ -9,17 +11,18 @@ import Rate_5 from '../../icons/5.png';
 
 import './UserRates.scss';
 
-const UserRates = (rate) => {
+const UserRates = ( { rate, id } ) => {
     const [activeItem, setActiveItem] = useState(rate);
     const data = [ Rate_1, Rate_3, Rate_5];
+    const {loading, error, postSetRate, clearError} = useApiService();
 
     const changeActive = (value) => {
         if (value === activeItem) {
             return;
         }
-        
-        console.log('New Rate: ', value);
-        setActiveItem(value);
+
+        clearError();
+        postSetRate(id, value).then(() => setActiveItem(value));
     };
 
     const renderEmoji = () => {

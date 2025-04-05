@@ -23,23 +23,26 @@ const useApiService = () => {
     };
 
     const postQueryResponse = async (query) => {
+        if (!query) {
+            return;
+        }
+
         const uuid = getUuid();
+
         const response = await request(
-            url=`${_apiBase}/api/query/${uuid}`,
-            method = 'POST',
-            body=JSON.stringify({ query }),
+            `${_apiBase}/api/query/${uuid}`,
+            'POST',
+            JSON.stringify({ query }),
         );
 
-        const { id, answer } = response;
-        return { id, answer };
+        return response;
     };
 
     const postSetRate = async (id, rate) => {
-        const uuid = getUuid();
         const response = await request(
-            url=`${_apiBase}/api/rate/${uuid}`,
-            method = 'POST',
-            body=JSON.stringify({ id, rate }),
+            `${_apiBase}/api/set_rate/${id}`,
+            'POST',
+            JSON.stringify({ rate }),
         );
 
         return;
