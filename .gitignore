@@ -1,5 +1,11 @@
 env/
 my_test/
+models/
+results/
+
 web/node_modules
 web/build
 web/.env
+LLM.ipynb
+test.ipynb
+test2.ipynb
