@@ -36,7 +36,7 @@ Content-type: application/json; charset=utf-8
 {
     "ID": 119272,
     "Responce": "{\"name\": \"Responce12\"}",
-    "ClassificationName": "erger"
+    "ClassificationName": "Сергей22"
 
 }
 
@@ -60,3 +60,6 @@ Content-type: application/json; charset=utf-8
 {
     "Name": "Сергей22"
 }
+
+### Получить все запросы категория до датам
+Get  http://localhost:8080/categoriesbydate

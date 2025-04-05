@@ -11,23 +11,43 @@ import (
 	"gopkg.in/yaml.v3"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 const configPath = "config.yml"
 
 type Classification struct {
-	ID   int    `gorm:"primaryKey"`
-	Name string `gorm:"not null;unique"`
+	ID   int    `gorm:"primaryKey; column:id"`
+	Name string `gorm:"not null;unique; column:name"`
+}
+
+func (Classification) TableName() string {
+	return "classifications"
 }
 
 type History struct {
-	ID               int       `gorm:"primaryKey,dbname(id)"`
-	UserUuid         uuid.UUID `gorm:"not null"`
-	Query            string    `gorm:"not null"`
-	ClassificationId *int      `gorm:"null"`
-	Responce         *string   `gorm:"null"`
-	Rating           *int      `gorm:"null"`
-	DateTimeCreate   time.Time `gorm:"not null"`
+	ID               int       `gorm:"primaryKey; column:id"`
+	UserUuid         uuid.UUID `gorm:"not null; column:user_uuid"`
+	Query            string    `gorm:"not null; column:query"`
+	ClassificationId *int      `gorm:"null; column:classification_id"`
+	Responce         *string   `gorm:"null; column:responce"`
+	Rating           *int      `gorm:"null; column:rating"`
+	DateTimeCreate   time.Time `gorm:"not null; column:date_time_create"`
+}
+
+func (History) TableName() string {
+	return "histories"
+}
+
+type CategoriesByDate struct {
+	ClassificationName string    `gorm:"null; column:classification_name"`
+	InteractionResult  string    `gorm:"null; column:interaction_result"`
+	DateCreate         time.Time `gorm:"null; column:date_create"`
+	Count              int       `gorm:"not null; column:count"`
+}
+
+func (CategoriesByDate) TableName() string {
+	return "сategories_by_date"
 }
 
 type HistoryCreate struct {
@@ -79,7 +99,10 @@ func initDB() {
 	ReadConfig()
 	dsn := AppConfig.DB
 	var err error
-	db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Info),
+	})
+
 	if err != nil {
 		panic("failed to connect to database")
 	}
@@ -102,6 +125,8 @@ func main() {
 
 	r.POST("/classification", createClassification)
 	r.GET("/classification", getClassification)
+
+	r.GET("/categoriesbydate", getCategoriesByDate)
 
 	r.Run(AppConfig.HOST)
 }
@@ -163,7 +188,10 @@ func updateHistoryResponceAndClassificationName(c *gin.Context) {
 	var classification = Classification{Name: historyUpdate.ClassificationName}
 
 	// Find the history by ID and update.
-	if err := db.Find(&classification).Where(&Classification{Name: historyUpdate.ClassificationName}).Error; err != nil {
+	if err := db.
+		Where(&Classification{Name: historyUpdate.ClassificationName}).
+		Find(&classification).
+		Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -241,4 +269,10 @@ func getClassification(c *gin.Context) {
 	var classification []Classification
 	db.Find(&classification)
 	c.JSON(http.StatusOK, classification)
+}
+
+func getCategoriesByDate(c *gin.Context) {
+	var categoriesByDate []CategoriesByDate
+	db.Find(&categoriesByDate)
+	c.JSON(http.StatusOK, categoriesByDate)
 }
