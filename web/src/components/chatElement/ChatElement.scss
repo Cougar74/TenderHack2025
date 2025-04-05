@@ -2,11 +2,17 @@
     display: flex;
     justify-content: flex-end;
     width: 100%;
-    user-select: none;
+    pointer-events: none;
+    caret-color: transparent;
 }
 
 .response {
     display: flex;
+    flex-direction: column;
     justify-content: flex-start;
+    
+    gap: 1rem;
     width: 100%;
+    margin: 1rem;
+    caret-color: transparent;
 }

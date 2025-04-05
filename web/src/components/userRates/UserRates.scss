@@ -1,0 +1,52 @@
+.userRates {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+    gap: 2rem;
+
+    .userRatesEmoji {
+        display: flex;
+        flex-direction: row;
+        gap: 4px;
+
+        .userRatesEmojiItem {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            padding: 4px 14px;
+            background-color: #F0F2F5;
+            border-radius: 100px;
+            font-size: 20px;
+            cursor: pointer;
+
+            img {
+                width: 20px;
+                height: 20px;
+                caret-color: transparent;
+            }
+        }
+    }
+}
+
+.item-red {
+    background-color: #DA0014 !important;
+}
+
+.item-orange {
+    background-color: #FF7700 !important;
+}
+
+.item-yellow {
+    background-color: #FFDD00 !important;
+}
+
+.item-grass {
+    background-color: #7FCE00 !important;
+}
+
+.item-green {
+    background-color: #00B621 !important;
+}

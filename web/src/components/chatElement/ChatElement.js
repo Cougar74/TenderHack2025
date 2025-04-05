@@ -1,17 +1,26 @@
 import { Table, Card } from 'react-bootstrap';
 
+import UserRates from '../userRates/UserRates';
+
 import './ChatElement.scss';
 
-const ChatElement = ({ data }) => {
+const ChatElement = ({ data, handleModal }) => {
     const {data_type, content, content_type} = data;
+
+    const generateSupport = () => {
+        return(
+            <span>По вашему запросу ничего не найдено. Попробуйте изменить запрос или <a href="#" onClick={handleModal}>обратитесь в поддержку</a></span>
+        )
+    }
     
     const parse = () => {
-        
         if (data_type === 'request') {
             return (
                 <Card style={{width: 'max-content', maxWidth: '75%'}} bg='body-tertiary' border='0'>
                     <Card.Body>
-                        {content}
+                        <Card.Text>
+                            {content}
+                        </Card.Text>
                     </Card.Body>
                 </Card>
             );
@@ -19,11 +28,16 @@ const ChatElement = ({ data }) => {
         } else {
             if (content_type === 'text') {
                 return (
-                    <Card style={{width: 'max-content', maxWidth: '75%'}} bg='body-tertiary' border='0'>
-                        <Card.Body>
-                            {content}
-                        </Card.Body>
-                    </Card>
+                    <>
+                        <Card style={{width: 'max-content'}} border='0'>
+                            <Card.Body className='p-0'>
+                                {/* {content ? content : 'По вашему запросу ничего не найдено. Попробуйте изменить запрос или обратитесь в поддержку'} */}
+                                {content ? content : generateSupport()}
+                            </Card.Body>
+                        </Card>
+
+                        {content ? <UserRates /> : null}
+                    </>
                 );
             } else {
                 return (
