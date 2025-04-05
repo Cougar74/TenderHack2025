@@ -16,12 +16,12 @@ import (
 const configPath = "config.yml"
 
 type Classification struct {
-	ID   uint   `gorm:"primaryKey"`
+	ID   int    `gorm:"primaryKey"`
 	Name string `gorm:"not null;unique"`
 }
 
 type History struct {
-	ID               uint      `gorm:"primaryKey,dbname(id)"`
+	ID               int       `gorm:"primaryKey,dbname(id)"`
 	UserUuid         uuid.UUID `gorm:"not null"`
 	Query            string    `gorm:"not null"`
 	ClassificationId *int      `gorm:"null"`
@@ -39,6 +39,12 @@ type HistoryUpdateResponceAndClassificationId struct {
 	ID               uint
 	Responce         *string
 	ClassificationId *int
+}
+
+type HistoryUpdateResponceAndClassificationName struct {
+	ID                 uint
+	Responce           *string
+	ClassificationName string
 }
 type HistoryUpdateRating struct {
 	ID     uint
@@ -88,6 +94,7 @@ func main() {
 
 	r.POST("/history", createHistory)
 	r.PUT("/history/ResponceAndClassificationId", updateHistoryResponceAndClassificationId)
+	r.PUT("/history/ResponceAndClassificationName", updateHistoryResponceAndClassificationName)
 	r.PUT("/history/Rating", updateHistoryRating)
 	r.DELETE("/history/:id", deleteHistory)
 	r.GET("/history", getHistory)
@@ -143,6 +150,35 @@ func updateHistoryResponceAndClassificationId(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "history updated successfully"})
+}
+func updateHistoryResponceAndClassificationName(c *gin.Context) {
+	var historyUpdate HistoryUpdateResponceAndClassificationName
+
+	// Bind JSON data.
+	if err := c.ShouldBindJSON(&historyUpdate); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	var classification = Classification{Name: historyUpdate.ClassificationName}
+
+	// Find the history by ID and update.
+	if err := db.Find(&classification).Where(&Classification{Name: historyUpdate.ClassificationName}).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	var historyNew = History{
+		Responce:         historyUpdate.Responce,
+		ClassificationId: &classification.ID,
+	}
+	// Find the history by ID and update.
+	if err := db.Model(&History{}).Where("id = ?", historyUpdate.ID).Updates(&historyNew).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("%s%d%s%s", "history updated successfully ClassificationID = ", classification.ID, ", ClassificationName = ", historyUpdate.ClassificationName)})
 }
 
 func updateHistoryRating(c *gin.Context) {
