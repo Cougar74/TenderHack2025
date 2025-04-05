@@ -1,12 +1,19 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
+	"os"
+	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gofrs/uuid/v5"
+	"gopkg.in/yaml.v3"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
+
+const configPath = "config.yml"
 
 type Classification struct {
 	ID   uint   `gorm:"primaryKey"`
@@ -14,18 +21,56 @@ type Classification struct {
 }
 
 type History struct {
-	ID               uint   `gorm:"primaryKey"`
-	UserName         string `gorm:"not null"`
-	Query            string `gorm:"not null"`
-	ClassificationId *int   `gorm:"null"`
-	Responce         string `gorm:"null"`
-	Rating           *int   `gorm:"null"`
+	ID               uint      `gorm:"primaryKey,dbname(id)"`
+	UserUuid         uuid.UUID `gorm:"not null"`
+	Query            string    `gorm:"not null"`
+	ClassificationId *int      `gorm:"null"`
+	Responce         *string   `gorm:"null"`
+	Rating           *int      `gorm:"null"`
+	DateTimeCreate   time.Time `gorm:"not null"`
+}
+
+type HistoryCreate struct {
+	UserUuid uuid.UUID
+	Query    string
+}
+
+type HistoryUpdateResponceAndClassificationId struct {
+	ID               uint
+	Responce         *string
+	ClassificationId *int
+}
+type HistoryUpdateRating struct {
+	ID     uint
+	Rating *int
 }
 
 var db *gorm.DB
 
+type Cfg struct {
+	DB string `yaml:"db"`
+}
+
+var AppConfig *Cfg
+
+func ReadConfig() {
+	f, err := os.Open(configPath)
+	if err != nil {
+		fmt.Println(err)
+	}
+	defer f.Close()
+
+	decoder := yaml.NewDecoder(f)
+
+	err = decoder.Decode(&AppConfig)
+	if err != nil {
+		fmt.Println(err)
+	}
+}
+
 func initDB() {
-	dsn := "host=localhost user=postgres password=Qwerty11 dbname=tenderhack port=5432 sslmode=disable"
+	ReadConfig()
+	dsn := AppConfig.DB
 	var err error
 	db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
@@ -41,10 +86,11 @@ func main() {
 	r := gin.Default()
 
 	r.POST("/history", createHistory)
-	r.PUT("/history/:id", updateHistory)
+	r.PUT("/history/ResponceAndClassificationId", updateHistoryResponceAndClassificationId)
+	r.PUT("/history/Rating", updateHistoryRating)
 	r.DELETE("/history/:id", deleteHistory)
 	r.GET("/history", getHistory)
-	r.GET("/historyUser/:UserName", getHistoryUser)
+	r.GET("/historyUser/:UserUuid", getHistoryUser)
 
 	r.POST("/classification", createClassification)
 	r.GET("/classification", getClassification)
@@ -53,29 +99,65 @@ func main() {
 }
 
 func createHistory(c *gin.Context) {
-	var history History
-	if err := c.ShouldBindJSON(&history); err != nil {
+	var historyCreate HistoryCreate
+
+	if err := c.ShouldBindJSON(&historyCreate); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+
+	var history = History{
+		UserUuid:         historyCreate.UserUuid,
+		Query:            historyCreate.Query,
+		ClassificationId: nil,
+		Responce:         nil,
+		Rating:           nil,
+		DateTimeCreate:   time.Now(),
+	}
+
 	if err := db.Create(&history).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, history)
+	c.JSON(http.StatusOK, history.ID)
 }
 
-func updateHistory(c *gin.Context) {
-	var history History
+func updateHistoryResponceAndClassificationId(c *gin.Context) {
+	var historyUpdate HistoryUpdateResponceAndClassificationId
 
 	// Bind JSON data.
-	if err := c.ShouldBindJSON(&history); err != nil {
+	if err := c.ShouldBindJSON(&historyUpdate); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
+	var historyNew = History{
+		Responce:         historyUpdate.Responce,
+		ClassificationId: historyUpdate.ClassificationId,
+	}
 	// Find the history by ID and update.
-	if err := db.Model(&History{}).Where("id = ?", c.Param("id")).Updates(&history).Error; err != nil {
+	if err := db.Model(&History{}).Where("id = ?", historyUpdate.ID).Updates(&historyNew).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "history updated successfully"})
+}
+
+func updateHistoryRating(c *gin.Context) {
+	var historyUpdate HistoryUpdateRating
+
+	// Bind JSON data.
+	if err := c.ShouldBindJSON(&historyUpdate); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	var historyNew = History{
+		Rating: historyUpdate.Rating,
+	}
+	// Find the history by ID and update.
+	if err := db.Model(&History{}).Where("id = ?", historyUpdate.ID).Updates(&historyNew).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -100,7 +182,8 @@ func getHistory(c *gin.Context) {
 
 func getHistoryUser(c *gin.Context) {
 	var history []History
-	db.Where("user_name = ?", c.Param("UserName")).Find(&history)
+	//var uuid = uuid.Must(uuid.FromString(c.Param("UserUuid")))
+	db.Where("user_uuid = ?", c.Param("UserUuid")).Find(&history)
 	c.JSON(http.StatusOK, history)
 }
 

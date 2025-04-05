@@ -8,13 +8,13 @@ CREATE TABLE Classifications (
 );
 CREATE TABLE Histories (
     id SERIAL PRIMARY KEY,
-    user_name VARCHAR(100) NOT NULL,
+    user_uuid uuid NOT NULL,
     query VARCHAR(255) NOT NULL,
-    classificationId integer NULL,
+    classification_id integer NULL,
     responce VARCHAR(4000) NULL,
     rating integer null,
-    dateTimeCreate timestamp  default (now() at time zone 'utc') not null,
-    FOREIGN KEY (classificationId) REFERENCES classifications (Id)
+    date_time_create timestamp  default (now() at time zone 'utc') not null,
+    FOREIGN KEY (classification_id) REFERENCES classifications (id)
 
 );
 
