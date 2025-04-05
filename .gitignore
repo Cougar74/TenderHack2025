@@ -6,6 +6,11 @@ results/
 web/node_modules
 web/build
 web/.env
+
+web_stat/node_modules
+web_stat/build
+web_stat/.env
+
 LLM.ipynb
 test.ipynb
 test2.ipynb
