@@ -5,6 +5,9 @@
     align-items: center;
 
     gap: 2rem;
+    padding: 12px 16px;
+    border-radius: 6px  ;
+    border: 1px solid #D9D9D9;
 
     .userRatesEmoji {
         display: flex;
@@ -36,7 +39,7 @@
 }
 
 .item-orange {
-    background-color: #FF7700 !important;
+    background-color: #FFA600 !important;
 }
 
 .item-yellow {
@@ -48,5 +51,5 @@
 }
 
 .item-green {
-    background-color: #00B621 !important;
+    background-color: #00B120 !important;
 }

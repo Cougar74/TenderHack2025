@@ -11,9 +11,13 @@ import './UserRates.scss';
 
 const UserRates = (rate) => {
     const [activeItem, setActiveItem] = useState(rate);
-    const data = [ Rate_1, Rate_2, Rate_3, Rate_4, Rate_5];
+    const data = [ Rate_1, Rate_3, Rate_5];
 
     const changeActive = (value) => {
+        if (value === activeItem) {
+            return;
+        }
+        
         console.log('New Rate: ', value);
         setActiveItem(value);
     };
@@ -67,14 +71,6 @@ const UserRatesItem = ({ emoji, value, changeActive, isActive = false }) => {
                 break;
 
             case 3:
-                setColor('item-yellow');
-                break;
-
-            case 4:
-                setColor('item-grass');
-                break;
-
-            case 5:
                 setColor('item-green');
                 break;
 
