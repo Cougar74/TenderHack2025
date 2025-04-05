@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
-
 import { Container, Stack } from 'react-bootstrap';
+
+import useApiService from '../../services/ApiService';
 
 import QueryInput from '../queryInput/QueryInput';
 import ChatElement from '../chatElement/ChatElement';
@@ -14,6 +15,16 @@ function App() {
     const queryInputContainerRef = useRef(null);
     const lastChatElement = useRef(null);
     const [showModal, setShowModal] = useState(false);
+
+    useEffect(() => {
+        if (!localStorage.getItem('uuid')) {
+            localStorage.setItem('uuid', crypto.randomUUID());
+        }
+
+        const uuid = localStorage.getItem('uuid');
+
+
+    }, []);
 
     useEffect(() => {
         if (chatList.length === 0) {
