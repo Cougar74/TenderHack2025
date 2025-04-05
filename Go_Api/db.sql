@@ -6,6 +6,7 @@ CREATE TABLE Classifications (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL UNIQUE
 );
+
 CREATE TABLE Histories (
     id SERIAL PRIMARY KEY,
     user_uuid uuid NOT NULL,
