@@ -1,5 +1,5 @@
 -- Create the library database.
-CREATE DATABASE TenderHack;
+-- CREATE DATABASE TenderHack;
 
 -- Create tables.
 CREATE TABLE Classifications (

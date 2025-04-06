@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Container, Stack } from 'react-bootstrap';
+import { Container, Stack, Button } from 'react-bootstrap';
 
 import useApiService from '../../services/ApiService';
 
@@ -78,6 +78,13 @@ function App() {
             });
     };
 
+    const generateNewDialog = () => {
+        const uuid = crypto.randomUUID();
+        localStorage.setItem('uuid', uuid);
+
+        setChatList([]);
+    };
+
     const renderChatElement = () => {
         const items = chatList.map((chat, index) => (
             <ChatElement 
@@ -91,6 +98,15 @@ function App() {
         return (
             <>
                 {items}
+                {chatList.length ?
+                    <Button
+                        variant="secondary"
+                        onClick={generateNewDialog}
+                        style={{ width: 'max-content'}}
+                    >
+                        Начать новый диалог
+                    </Button> : null
+                }
             </>
         )
     };

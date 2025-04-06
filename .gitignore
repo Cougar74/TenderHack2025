@@ -11,6 +11,7 @@ web_stat/node_modules
 web_stat/build
 web_stat/.env
 
+scp.bash
 LLM.ipynb
 test.ipynb
 test2.ipynb
