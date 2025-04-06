@@ -56,8 +56,12 @@ async def get_user_history(uuid: UUID):
     
     response = await send_request(f'/historyUser/{uuid}', method='GET')
     
+    data = response['response']
+    for d in data:
+        d['Responce'] = json.loads(d['Responce'])
+    
     return {
-        'history': response['response'],
+        'history': data
     }
 
 @app.get("/api/models/query")
@@ -119,7 +123,7 @@ async def post_user_query(uuid: UUID, body: dict):
     # data = {**ANSWER.pop(), **ANSWER2.pop()}
     data = ANSWER.pop()
     
-    send_data = {'ID': response, 'Responce': str(data['answer']), 'ClassificationName': data['class']}
+    send_data = {'ID': response, 'Responce': json.dumps(data['answer'], ensure_ascii=False), 'ClassificationName': data['class']}
     print(f'{send_data = }')
     await send_request('/history/ResponceAndClassificationName', method='PUT', data=send_data)
     

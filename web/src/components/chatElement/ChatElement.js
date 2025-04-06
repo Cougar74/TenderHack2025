@@ -5,7 +5,7 @@ import UserRates from '../userRates/UserRates';
 import './ChatElement.scss';
 
 const ChatElement = ({ data, handleModal }) => {
-    const {data_type, content, content_type, id, links} = data.Responce ? data.Responce : data;
+    const {data_type, content, content_type, id, links, short_answer, short_sources} = data.Responce ? data.Responce : data;
 
     const generateSupport = () => {
         return(
@@ -14,11 +14,21 @@ const ChatElement = ({ data, handleModal }) => {
     };
 
     const generateLinks = () => {
-        const items = links?.map((item, i) => {
-            return (
-                <Card.Link href={item.link} key={item.text}>{item.text}</Card.Link>
-            )
-        });
+        let items;
+
+        if (links){
+            items = links?.map((item, i) => {
+                return (
+                    <Card.Link href={item.link} key={item.text}>{item.text}</Card.Link>
+                )
+            });
+        } else {
+            items = short_sources?.map((item, i) => {
+                return (
+                    <Card.Link href={`#${i}`} key={`${item.source}, стр.${item.page}`}>{`${item.source}, стр.${item.page}`}</Card.Link>
+                )
+            });
+        }
 
         return items;
     };
@@ -43,7 +53,7 @@ const ChatElement = ({ data, handleModal }) => {
                     {/* <Card style={{width: 'max-content'}} border='0'> */}
                     <Card border='0'>
                         <Card.Body className='p-0'>
-                            {content ? content : generateSupport()}
+                            {content ? content : short_answer ? short_answer: generateSupport()}
                         </Card.Body>
                         {generateLinks()}
                     </Card>
