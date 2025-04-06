@@ -1,14 +1,14 @@
 
 ### Получить всю историю, всех  пользователей
-Get  http://localhost:8080/history
+Get  http://localhost:8080/api_go/history
 
 
 ### Получить всю историю, одного  пользователея
-Get  http://localhost:8080/historyUser/53aa35c8-e659-44b2-882f-f6a56e443c90
+Get  http://localhost:3123/api_go/historyUser/53aa35c8-e659-44b2-882f-f6a56e443c90
 
 
 ### Создать историю для пользователя.
-POST http://localhost:8080/history
+POST http://localhost:8080/api_go/history
 Content-type: application/json; charset=utf-8
 
 {
@@ -17,7 +17,7 @@ Content-type: application/json; charset=utf-8
 }
 
 ### Обновить у истории Ответ и Классификацию(ID)
-PUT http://localhost:8080/history/ResponceAndClassificationId
+PUT http://localhost:8080/api_go/history/ResponceAndClassificationId
 Content-type: application/json; charset=utf-8
 
 {
@@ -30,7 +30,7 @@ Content-type: application/json; charset=utf-8
 
 
 ### Обновить у истории Ответ и Классификацию(Name)
-PUT http://localhost:8080/history/ResponceAndClassificationName
+PUT http://localhost:8080/api_go/history/ResponceAndClassificationName
 Content-type: application/json; charset=utf-8
 
 {
@@ -42,7 +42,7 @@ Content-type: application/json; charset=utf-8
 
 
 ### Обновить рейтинг у истории
-PUT http://localhost:8080/history/Rating
+PUT http://localhost:8080/api_go/history/Rating
 Content-type: application/json; charset=utf-8
 
 {
@@ -51,10 +51,10 @@ Content-type: application/json; charset=utf-8
 }
 
 ### Получить все классификации
-Get  http://localhost:8080/classification
+Get  http://localhost:8080/api_go/classification
 
 ### Добавить классификацию
-POST http://localhost:8080/classification
+POST http://localhost:8080/api_go/classification
 Content-type: application/json; charset=utf-8
 
 {
@@ -62,4 +62,4 @@ Content-type: application/json; charset=utf-8
 }
 
 ### Получить все запросы категория до датам
-Get  http://localhost:8080/categoriesbydate
+Get  http://localhost:8080/api_go/categoriesbydate

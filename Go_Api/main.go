@@ -74,8 +74,9 @@ type HistoryUpdateRating struct {
 var db *gorm.DB
 
 type Cfg struct {
-	DB   string `yaml:"db"`
-	HOST string `yaml:"host"`
+	DB       string `yaml:"db"`
+	HOST     string `yaml:"host"`
+	ApiBegin string `yaml:"apiBegin"`
 }
 
 var AppConfig *Cfg
@@ -114,19 +115,19 @@ func initDB() {
 func main() {
 	initDB()
 	r := gin.Default()
+	beginApi := AppConfig.ApiBegin
+	r.POST(beginApi+"/history", createHistory)
+	r.PUT(beginApi+"/history/ResponceAndClassificationId", updateHistoryResponceAndClassificationId)
+	r.PUT(beginApi+"/history/ResponceAndClassificationName", updateHistoryResponceAndClassificationName)
+	r.PUT(beginApi+"/history/Rating", updateHistoryRating)
+	r.DELETE(beginApi+"/history/:id", deleteHistory)
+	r.GET(beginApi+"/history", getHistory)
+	r.GET(beginApi+"/historyUser/:UserUuid", getHistoryUser)
 
-	r.POST("/history", createHistory)
-	r.PUT("/history/ResponceAndClassificationId", updateHistoryResponceAndClassificationId)
-	r.PUT("/history/ResponceAndClassificationName", updateHistoryResponceAndClassificationName)
-	r.PUT("/history/Rating", updateHistoryRating)
-	r.DELETE("/history/:id", deleteHistory)
-	r.GET("/history", getHistory)
-	r.GET("/historyUser/:UserUuid", getHistoryUser)
+	r.POST(beginApi+"/classification", createClassification)
+	r.GET(beginApi+"/classification", getClassification)
 
-	r.POST("/classification", createClassification)
-	r.GET("/classification", getClassification)
-
-	r.GET("/categoriesbydate", getCategoriesByDate)
+	r.GET(beginApi+"/categoriesbydate", getCategoriesByDate)
 
 	r.Run(AppConfig.HOST)
 }
