@@ -5,7 +5,7 @@ import UserRates from '../userRates/UserRates';
 import './ChatElement.scss';
 
 const ChatElement = ({ data, handleModal }) => {
-    const {data_type, content, content_type, id, links} = data;
+    const {data_type, content, content_type, id, links} = data.Responce ? data.Responce : data;
 
     const generateSupport = () => {
         return(
@@ -14,7 +14,7 @@ const ChatElement = ({ data, handleModal }) => {
     };
 
     const generateLinks = () => {
-        const items = links.map((item, i) => {
+        const items = links?.map((item, i) => {
             return (
                 <Card.Link href={item.link} key={item.text}>{item.text}</Card.Link>
             )
@@ -24,6 +24,8 @@ const ChatElement = ({ data, handleModal }) => {
     };
     
     const parse = () => {
+        console.log(data_type, content, content_type, id, links);
+
         if (data_type === 'request') {
             return (
                 <Card style={{width: 'max-content', maxWidth: '75%'}} bg='body-tertiary' border='0'>
@@ -36,26 +38,21 @@ const ChatElement = ({ data, handleModal }) => {
             );
 
         } else {
-            if (content_type === 'text') {
-                return (
-                    <>
-                        <Card style={{width: 'max-content'}} border='0'>
-                            <Card.Body className='p-0'>
-                                {content ? content : generateSupport()}
-                            </Card.Body>
-                            {generateLinks()}
-                        </Card>
+            return(
+                <>
+                    {/* <Card style={{width: 'max-content'}} border='0'> */}
+                    <Card border='0'>
+                        <Card.Body className='p-0'>
+                            {content ? content : generateSupport()}
+                        </Card.Body>
+                        {generateLinks()}
+                    </Card>
 
-                        {content ? <UserRates id={id} /> : null}
-                    </>
-                );
-            } else {
-                return (
-                    generateTable(data)
-                );
-            }
+                    {content ? <UserRates id={id} /> : null}
+                </>
+            )
         }
-    }
+    };
 
     return (
         <div className={data_type === 'request' ? 'request' : 'response'}>

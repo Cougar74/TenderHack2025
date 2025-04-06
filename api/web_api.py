@@ -24,6 +24,28 @@ QUERY2 = []
 ANSWER = []
 ANSWER2 = []
 
+DB_URL = 'https://design-by-oz.ru/api_go'
+
+async def send_request(url: str, method: str, data: dict = None):
+    try:
+        if method.upper() == "GET":
+            response = requests.get(f'{DB_URL}{url}', params=data)
+        elif method.upper() == "POST":
+            response = requests.post(f'{DB_URL}{url}', json=data)
+        elif method.upper() == "PUT":
+            response = requests.put(f'{DB_URL}{url}', json=data)
+        elif method.upper() == "DELETE":
+            response = requests.delete(f'{DB_URL}{url}', json=data)
+        else:
+            return {"error": "Unsupported HTTP method"}
+        
+        return {
+            "status_code": response.status_code,
+            "response": response.json() if response.content else None
+        }
+    except Exception as e:
+        return {"error": str(e)}
+
 @app.get("/api/")
 async def read_root():
     return {"message": "Welcome to TenderHack2025 API"}
@@ -32,8 +54,10 @@ async def read_root():
 async def get_user_history(uuid: UUID):
     print(f'User history: {uuid}')
     
+    response = await send_request(f'/historyUser/{uuid}', method='GET')
+    
     return {
-        'history': [],
+        'history': response['response'],
     }
 
 @app.get("/api/models/query")
@@ -47,16 +71,16 @@ async def awaiting_query():
             'query': data
         }
         
-@app.get("/api/models/query2")
-async def awaiting_query2():
-    global QUERY2
+# @app.get("/api/models/query2")
+# async def awaiting_query2():
+#     global QUERY2
     
-    if len(QUERY2):
-        data = QUERY2.pop()
+#     if len(QUERY2):
+#         data = QUERY2.pop()
         
-        return {
-            'query': data
-        }
+#         return {
+#             'query': data
+#         }
     
 @app.post("/api/models/query")
 async def awaiting_query(data: dict):
@@ -64,11 +88,11 @@ async def awaiting_query(data: dict):
     
     ANSWER.append(deepcopy(data))
     
-@app.post("/api/models/query2")
-async def awaiting_query(data: dict):
-    global ANSWER2
+# @app.post("/api/models/query2")
+# async def awaiting_query(data: dict):
+#     global ANSWER2
     
-    ANSWER2.append(deepcopy(data))
+#     ANSWER2.append(deepcopy(data))
     
 @app.post("/api/query/{uuid}")
 async def post_user_query(uuid: UUID, body: dict):
@@ -77,19 +101,32 @@ async def post_user_query(uuid: UUID, body: dict):
     query = body.get("query")
     print(f'Get query: {uuid} -- {query}')
     QUERY.append(query)
-    QUERY2.append(query)
+    # QUERY2.append(query)
+    
+    data = {'UserUuid': str(uuid), 'Query': query}
+    response = await send_request('/history', method='POST', data=data)
+    response = response['response']
     
     # await asyncio.sleep(2)
-    while not (len(ANSWER) & len(ANSWER)):
-        print(f'Waiting! {len([*ANSWER, *ANSWER]) = } ---- {len([*QUERY, *QUERY2]) = }')
+    # while not (len(ANSWER) & len(ANSWER2)):
+    #     print(f'Waiting! {len([*ANSWER, *ANSWER2]) = } ---- {len([*QUERY, *QUERY2]) = }')
+    #     await asyncio.sleep(0.5)
+    
+    while not len(ANSWER):
+        print(f'Waiting! {len(ANSWER) = } ---- {len(QUERY) = }')
         await asyncio.sleep(0.5)
     
-    data = {**ANSWER.pop(), **ANSWER2.pop()}
+    # data = {**ANSWER.pop(), **ANSWER2.pop()}
+    data = ANSWER.pop()
     
-    links = list({'text': f"{t['source']}, стр.{t['page']}", links: f"#{t['page']}"} for t in data['answer']['short_sources'])
+    send_data = {'ID': response, 'Responce': str(data['answer']), 'ClassificationName': data['class']}
+    print(f'{send_data = }')
+    await send_request('/history/ResponceAndClassificationName', method='PUT', data=send_data)
+    
+    links = list({'text': f"{t['source']}, стр.{t['page']}", 'links': f"#{t['page']}"} for t in data['answer']['short_sources'])
     
     return {
-        'id': int(time.time()),
+        'id': response,
         'answer': data['answer']['short_answer'],
         # 'answer': data['answer']['answer'],
         'links': links
@@ -107,6 +144,9 @@ async def post_user_query(uuid: UUID, body: dict):
 @app.post("/api/set_rate/{id}")
 async def post_set_rate(id: int, body: dict):
     rate = body.get("rate")
+    
+    await send_request('/history/Rating', method='PUT', data={'ID': id, 'Rating': rate})
+    
     print(f'Set rate: id={id}, rate={rate}')
     
     return {

@@ -35,6 +35,9 @@ const useApiService = () => {
             JSON.stringify({ query }),
         );
 
+        console.log('Query Response!');
+        console.log(response);
+
         return response;
     };
 

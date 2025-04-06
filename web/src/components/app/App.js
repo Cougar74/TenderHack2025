@@ -41,6 +41,8 @@ function App() {
     }, []);
 
     useEffect(() => {
+        console.log('chatList: ', chatList);
+
         if (chatList.length === 0) {
             queryInputContainerRef.current.classList.remove('fixed-bottom');
         } else {

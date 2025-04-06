@@ -1,13 +1,15 @@
 import os
 
 # Указываем использовать первую видеокарту
-os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+# os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+# os.environ['TORCH_USE_CUDA_DSA'] = "1"
+# os.environ['CUDA_LAUNCH_BLOCKING'] = "1"
 
 import pandas as pd
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 import torch
 
-DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+DEVICE = torch.device("cuda:1" if torch.cuda.is_available() else "cpu")
 
 def classify_question_llm(question, tokenizer, model, classes):
     inputs = tokenizer(question, return_tensors='pt', padding=True, truncation=True).to(DEVICE)

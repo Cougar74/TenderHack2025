@@ -1,8 +1,5 @@
 import os
 
-# Указываем использовать вторую видеокарту
-os.environ["CUDA_VISIBLE_DEVICES"] = "1"
-
 from PyPDF2 import PdfReader
 from langchain.text_splitter import CharacterTextSplitter
 from langchain.embeddings import HuggingFaceEmbeddings
@@ -14,7 +11,7 @@ from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
 import torch
 from pathlib import Path
 
-DEVICE = torch.device("cuda:1" if torch.cuda.is_available() else "cpu")
+DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 def load_pdf(file_path):
     reader = PdfReader(file_path)
@@ -86,7 +83,7 @@ def initialize_llm(model_name = "IlyaGusev/saiga_llama3_8b",
         model = AutoModelForCausalLM.from_pretrained(
             model_name,
             torch_dtype=torch_dtype,
-            device_map="auto" if device == "cuda" else None,
+            device_map="balanced_low_0" if device == "cuda" else None,
             low_cpu_mem_usage=True
         )
         
@@ -116,6 +113,8 @@ def ask_question(question, vectorstore, llm):
     )
     
     result = qa_chain({"query": question})
+    
+    torch.cuda.empty_cache()
     
     sources = []
     for doc in result["source_documents"]:
