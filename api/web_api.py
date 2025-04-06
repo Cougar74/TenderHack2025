@@ -20,8 +20,9 @@ app.add_middleware(
 )
 
 QUERY = []
+QUERY2 = []
 ANSWER = []
-
+ANSWER2 = []
 
 @app.get("/api/")
 async def read_root():
@@ -41,9 +42,21 @@ async def awaiting_query():
     
     if len(QUERY):
         data = QUERY.pop()
-    return {
-        'query': data
-    }
+        
+        return {
+            'query': data
+        }
+        
+@app.get("/api/models/query2")
+async def awaiting_query2():
+    global QUERY2
+    
+    if len(QUERY2):
+        data = QUERY2.pop()
+        
+        return {
+            'query': data
+        }
     
 @app.post("/api/models/query")
 async def awaiting_query(data: dict):
@@ -51,18 +64,27 @@ async def awaiting_query(data: dict):
     
     ANSWER.append(deepcopy(data))
     
+@app.post("/api/models/query2")
+async def awaiting_query(data: dict):
+    global ANSWER2
+    
+    ANSWER2.append(deepcopy(data))
+    
 @app.post("/api/query/{uuid}")
 async def post_user_query(uuid: UUID, body: dict):
-    global ANSWER
+    global QUERY, ANSWER, QUERY2, ANSWER2
     
     query = body.get("query")
     print(f'Get query: {uuid} -- {query}')
+    QUERY.append(query)
+    QUERY2.append(query)
     
     # await asyncio.sleep(2)
-    while not len(ANSWER):
+    while not (len(ANSWER) & len(ANSWER)):
+        print(f'Waiting! {len([*ANSWER, *ANSWER]) = } ---- {len([*QUERY, *QUERY2]) = }')
         await asyncio.sleep(0.5)
     
-    data = ANSWER.pop()
+    data = {**ANSWER.pop(), **ANSWER2.pop()}
     
     links = list({'text': f"{t['source']}, стр.{t['page']}", links: f"#{t['page']}"} for t in data['answer']['short_sources'])
     

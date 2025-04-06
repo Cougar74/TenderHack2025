@@ -1,4 +1,8 @@
 import os
+
+# Указываем использовать вторую видеокарту
+os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+
 from PyPDF2 import PdfReader
 from langchain.text_splitter import CharacterTextSplitter
 from langchain.embeddings import HuggingFaceEmbeddings
@@ -9,6 +13,8 @@ from langchain.document_loaders import TextLoader
 from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
 import torch
 from pathlib import Path
+
+DEVICE = torch.device("cuda:1" if torch.cuda.is_available() else "cpu")
 
 def load_pdf(file_path):
     reader = PdfReader(file_path)

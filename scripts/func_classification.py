@@ -1,9 +1,13 @@
+import os
+
+# Указываем использовать первую видеокарту
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+
 import pandas as pd
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 import torch
-import os
 
-DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
+DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 def classify_question_llm(question, tokenizer, model, classes):
     inputs = tokenizer(question, return_tensors='pt', padding=True, truncation=True).to(DEVICE)
@@ -12,7 +16,7 @@ def classify_question_llm(question, tokenizer, model, classes):
     return classes[predicted_class]
 
 def prepare_classificator():
-    tokenizer = AutoTokenizer.from_pretrained('./models/distilbert-base-multilingual-cased')
+    tokenizer = AutoTokenizer.from_pretrained('distilbert-base-multilingual-cased')
     model = AutoModelForSequenceClassification.from_pretrained('./models/class.model').to(DEVICE)
     classes = pd.read_pickle('./models/classes.pickle')
     
