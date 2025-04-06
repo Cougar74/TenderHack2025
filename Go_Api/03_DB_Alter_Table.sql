@@ -5,9 +5,9 @@ ALTER TABLE histories
 ADD responce_json json NULL;
 
 UPDATE histories
-SET responce_json = to_json(responce::text);
+SET responce_json = to_json(responce::text);`
 
-ALTER TABLE histories
+ALTER TABLE histories`
 DROP COLUMN responce;
 
 ALTER TABLE histories

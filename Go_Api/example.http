@@ -1,14 +1,56 @@
 
 ### Получить всю историю, всех  пользователей
-Get  http://localhost:8080/api_go/history
+Get  http://localhost:3123/api_go/history
 
+# # RESP:
+# [
+#   {
+#     "ID": 119273,
+#     "UserUuid": "53aa35c8-e659-44b2-882f-f6a56e443c90",
+#     "Query": "John Coltrane11",
+#     "ClassificationId": null,
+#     "Responce": null,
+#     "Rating": null,
+#     "DateTimeCreate": "2025-04-06T11:29:16.806083Z"
+#   },
+#   {
+#     "ID": 119274,
+#     "UserUuid": "53aa35c8-e659-44b2-882f-f6a56e443c90",
+#     "Query": "John Coltrane11",
+#     "ClassificationId": null,
+#     "Responce": null,
+#     "Rating": null,
+#     "DateTimeCreate": "2025-04-06T12:00:43.950746Z"
+#   }
+# ]
 
 ### Получить всю историю, одного  пользователея
 Get  http://localhost:3123/api_go/historyUser/53aa35c8-e659-44b2-882f-f6a56e443c90
 
+# RESP:
+# [
+#   {
+#     "ID": 119273,
+#     "UserUuid": "53aa35c8-e659-44b2-882f-f6a56e443c90",
+#     "Query": "John Coltrane11",
+#     "ClassificationId": null,
+#     "Responce": null,
+#     "Rating": null,
+#     "DateTimeCreate": "2025-04-06T11:29:16.806083Z"
+#   },
+#   {
+#     "ID": 119274,
+#     "UserUuid": "53aa35c8-e659-44b2-882f-f6a56e443c90",
+#     "Query": "John Coltrane11",
+#     "ClassificationId": null,
+#     "Responce": null,
+#     "Rating": null,
+#     "DateTimeCreate": "2025-04-06T12:00:43.950746Z"
+#   }
+# ]
 
 ### Создать историю для пользователя.
-POST http://localhost:8080/api_go/history
+POST http://localhost:3123/api_go/history
 Content-type: application/json; charset=utf-8
 
 {
@@ -16,8 +58,13 @@ Content-type: application/json; charset=utf-8
     "Query": "John Coltrane11"
 }
 
+# # RESP:
+# 119275
+
+
+
 ### Обновить у истории Ответ и Классификацию(ID)
-PUT http://localhost:8080/api_go/history/ResponceAndClassificationId
+PUT http://localhost:3123/api_go/history/ResponceAndClassificationId
 Content-type: application/json; charset=utf-8
 
 {
@@ -27,10 +74,14 @@ Content-type: application/json; charset=utf-8
 
 }
 
+# # RESP:
+# {
+#   "message": "history updated successfully"
+# }
 
 
 ### Обновить у истории Ответ и Классификацию(Name)
-PUT http://localhost:8080/api_go/history/ResponceAndClassificationName
+PUT http://localhost:3123/api_go/history/ResponceAndClassificationName
 Content-type: application/json; charset=utf-8
 
 {
@@ -40,9 +91,13 @@ Content-type: application/json; charset=utf-8
 
 }
 
+# # RESP:
+# {
+#   "message": "history updated successfully ClassificationID = 11, ClassificationName = Сергей22"
+# }
 
 ### Обновить рейтинг у истории
-PUT http://localhost:8080/api_go/history/Rating
+PUT http://localhost:3123/api_go/history/Rating
 Content-type: application/json; charset=utf-8
 
 {
@@ -50,16 +105,59 @@ Content-type: application/json; charset=utf-8
     "Rating": 10
 }
 
+# # RESP:
+# {
+#   "message": "history updated successfully"
+# }
+
+
+
 ### Получить все классификации
-Get  http://localhost:8080/api_go/classification
+Get  http://localhost:3123/api_go/classification
+
+# # RESP:
+# [
+#   {
+#     "ID": 1,
+#     "Name": "Вопросы о регистрации и управлении учетными записями"
+#   },
+#   {
+#     "ID": 2,
+#     "Name": "Котировочные сессии и закупки"
+#   }...
+# ]
+
 
 ### Добавить классификацию
-POST http://localhost:8080/api_go/classification
+POST http://localhost:3123/api_go/classification
 Content-type: application/json; charset=utf-8
 
 {
-    "Name": "Сергей22"
+    "Name": "Сергей21"
 }
 
+# # RESP:
+# {
+#   "ID": 13,
+#   "Name": "Сергей21"
+# }
+
+
 ### Получить все запросы категория до датам
-Get  http://localhost:8080/api_go/categoriesbydate
+Get  http://localhost:3123/api_go/categoriesbydate
+
+# # RESP:
+# [
+#   {
+#     "ClassificationName": "Вопросы о регистрации и управлении учетными записями",
+#     "InteractionResult": "Rating - 3",
+#     "DateCreate": "2025-03-01T00:00:00Z",
+#     "Count": 12
+#   },
+#   {
+#     "ClassificationName": "Вопросы о регистрации и управлении учетными записями",
+#     "InteractionResult": "Rating - 2",
+#     "DateCreate": "2025-03-01T00:00:00Z",
+#     "Count": 22
+#   },...
+# ]
