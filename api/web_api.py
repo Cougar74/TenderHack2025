@@ -58,7 +58,8 @@ async def get_user_history(uuid: UUID):
     
     data = response['response']
     for d in data:
-        d['Responce'] = json.loads(d['Responce'])
+        if d.get('Responce') is not None:
+            d['Responce'] = json.loads(d['Responce'])
     
     return {
         'history': data

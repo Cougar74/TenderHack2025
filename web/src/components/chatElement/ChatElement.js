@@ -50,6 +50,14 @@ const ChatElement = ({ data, handleModal }) => {
         } else {
             return(
                 <>
+                    <Card style={{width: 'max-content', maxWidth: '75%'}} bg='body-tertiary' border='0'>
+                        <Card.Body>
+                            <Card.Text>
+                                {data.Query}
+                            </Card.Text>
+                        </Card.Body>
+                    </Card>
+
                     {/* <Card style={{width: 'max-content'}} border='0'> */}
                     <Card border='0'>
                         <Card.Body className='p-0'>
@@ -58,7 +66,7 @@ const ChatElement = ({ data, handleModal }) => {
                         {generateLinks()}
                     </Card>
 
-                    {content ? <UserRates id={id} /> : null}
+                    {content ? <UserRates id={id} /> : short_answer ? <UserRates id={data.ID} rate={data.Rating}/> : null}
                 </>
             )
         }
