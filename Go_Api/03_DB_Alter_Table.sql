@@ -5,7 +5,7 @@ ALTER TABLE histories
 ADD responce_json json NULL;
 
 UPDATE histories
-SET responce_json = to_json(responce::text)
+SET responce_json = to_json(responce::text);
 
 ALTER TABLE histories
 DROP COLUMN responce;
@@ -16,7 +16,7 @@ RENAME COLUMN responce_json to responce;
 
 
 delete FROM public.histories
-Where date_time_create < '2025-03-01 00:00:00'
+Where date_time_create < '2025-03-01 00:00:00';
 
 
 with t1 as (
