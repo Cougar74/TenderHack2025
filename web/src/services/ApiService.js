@@ -3,7 +3,7 @@ import { useHttp } from "../hooks/http.hook";
 const useApiService = () => {
     const { loading, request, error, clearError } = useHttp();
 
-    const _apiBase = process.env.REACT_APP_API_URL;
+    const _apiBase = 'https://design-by-oz.ru';
     const getUuid = () => {
         let uuid = localStorage.getItem('uuid');
 

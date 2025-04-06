@@ -22,7 +22,6 @@ app.add_middleware(
 QUERY = []
 ANSWER = []
 
-
 @app.get("/api/")
 async def read_root():
     return {"message": "Welcome to TenderHack2025 API"}
@@ -41,9 +40,10 @@ async def awaiting_query():
     
     if len(QUERY):
         data = QUERY.pop()
-    return {
-        'query': data
-    }
+        
+        return {
+            'query': data
+        }
     
 @app.post("/api/models/query")
 async def awaiting_query(data: dict):
@@ -53,13 +53,15 @@ async def awaiting_query(data: dict):
     
 @app.post("/api/query/{uuid}")
 async def post_user_query(uuid: UUID, body: dict):
-    global ANSWER
+    global QUERY, ANSWER
     
     query = body.get("query")
     print(f'Get query: {uuid} -- {query}')
+    QUERY.append(query)
     
     # await asyncio.sleep(2)
     while not len(ANSWER):
+        print(f'Waiting! {len(ANSWER) = } ---- {len(QUERY) = }')
         await asyncio.sleep(0.5)
     
     data = ANSWER.pop()

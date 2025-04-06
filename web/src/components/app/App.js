@@ -119,7 +119,7 @@ function App() {
                 </Stack>
                 
                 <div ref={queryInputContainerRef} className="w-75 query-input-container centered">
-                    <QueryInput isData={chatList.length ? true : false} addQuery={addQuery}/>
+                    <QueryInput isData={chatList.length ? true : false} addQuery={addQuery} isLoading={loading}/>
                 </div>
             </Container>
 

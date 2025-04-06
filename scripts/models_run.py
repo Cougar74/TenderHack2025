@@ -1,32 +1,53 @@
 import time
 import requests
+from multiprocessing import Process, Queue, set_start_method
+import os
 
 from func_classification import prepare_classificator, classify_question_llm
 from func_llm import prepare_llm, ask_question
 
-tokenizer, model, classes = prepare_classificator()
-vectorstore, llm = prepare_llm()
+set_start_method('spawn', force=True)
 
-def process_data(data):
-    classification_res = classify_question_llm(data, tokenizer, model, classes)
-    llm_answer = ask_question(data, vectorstore, llm)
-    
-    return {
-        'class': classification_res,
-        'answer': llm_answer,
-    }
+def run_classification(queue):
+    os.environ["CUDA_VISIBLE_DEVICES"] = "0"  # Явно указываем первую видеокарту
+    tokenizer, model, classes = prepare_classificator()
+    while True:
+        if not queue.empty():
+            data = queue.get()
+            classification_res = classify_question_llm(data, tokenizer, model, classes)
+            queue.put({'class': classification_res})
+
+def run_llm(queue):
+    os.environ["CUDA_VISIBLE_DEVICES"] = "1"  # Явно указываем вторую видеокарту
+    vectorstore, llm = prepare_llm()
+    while True:
+        if not queue.empty():
+            data = queue.get()
+            llm_answer = ask_question(data, vectorstore, llm)
+            queue.put({'answer': llm_answer})
 
 def main():
-    url = "https://design-by-oz.ru:12349/api/models/query"
+    url = "https://design-by-oz.ru/api/models/query"
+    queue = Queue()
+
+    classification_process = Process(target=run_classification, args=(queue,))
+    llm_process = Process(target=run_llm, args=(queue,))
+    classification_process.start()
+    llm_process.start()
 
     while True:
         try:
             response = requests.get(url)
             if response.status_code == 200 and response.json():
                 data = response.json()
-                
-                send_data = process_data(data['query'])
-                post_response = requests.post(url, json=send_data)
+                query = data['query']
+                queue.put(query)
+
+                results = {}
+                for _ in range(2):
+                    results.update(queue.get())
+
+                post_response = requests.post(url, json=results)
                 if post_response.status_code == 200:
                     print("Data successfully sent to the server.")
                 else:

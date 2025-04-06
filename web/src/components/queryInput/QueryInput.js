@@ -2,22 +2,13 @@ import { useEffect, useState } from 'react';
 
 import { Stack, Button, InputGroup, Form } from 'react-bootstrap';
 
-const QueryInput = ({ isData, addQuery }) => {
-    const [isLoading, setLoading] = useState(false);
+const QueryInput = ({ isData, addQuery, isLoading }) => {
     const [query, setQuery] = useState('');
-
-    useEffect(() => {
-        if (isLoading) {
-            setTimeout(() => setLoading(false), 500);
-            // setLoading(false);
-        }
-    }, [isLoading]);
 
     const handleSearch = () => {
         console.log('Запрос:', query);
         addQuery(query);
         setQuery('');
-        setLoading(true);
     };
 
     const handleKeyDown = (e) => {
